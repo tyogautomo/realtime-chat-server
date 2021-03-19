@@ -1,0 +1,36 @@
+Arguments: 
+  C:\Program Files\nodejs\node.exe C:\Program Files (x86)\Yarn\bin\yarn.js init
+
+PATH: 
+  D:\APP\cmder\vendor\bin;D:\APP\cmder\vendor\conemu-maximus5\ConEmu\Scripts;D:\APP\cmder\vendor\conemu-maximus5;D:\APP\cmder\vendor\conemu-maximus5\ConEmu;C:\Python39\Scripts\;C:\Python39\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\ProgramData\chocolatey\bin;C:\Program Files (x86)\Yarn\bin\;C:\Program Files\nodejs\;C:\Program Files\OpenJDK\openjdk-8u282-b08\bin;C:\Program Files\Git\cmd;C:\Users\Ackerman\AppData\Local\Microsoft\WindowsApps;C:\Users\Ackerman\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\Ackerman\AppData\Local\Yarn\bin;C:\Users\Ackerman\AppData\Roaming\npm;C:\Users\Ackerman\AppData\Local\Android\Sdk\platform-tools;C:\Program Files\heroku\bin;C:\SDK\flutter\bin;C:\Program Files\MongoDB\Server\4.4\bin;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\bin;D:\APP\cmder
+
+Yarn version: 
+  1.22.5
+
+Node version: 
+  15.6.0
+
+Platform: 
+  win32 x64
+
+Trace: 
+  Error: canceled
+      at Interface.<anonymous> (C:\Program Files (x86)\Yarn\lib\cli.js:137009:13)
+      at Interface.emit (node:events:379:20)
+      at Interface._ttyWrite (node:readline:910:16)
+      at ReadStream.onkeypress (node:readline:235:10)
+      at ReadStream.emit (node:events:379:20)
+      at emitKeys (node:internal/readline/utils:358:14)
+      at emitKeys.next (<anonymous>)
+      at ReadStream.onData (node:readline:1179:36)
+      at ReadStream.emit (node:events:379:20)
+      at addChunk (node:internal/streams/readable:313:12)
+
+npm manifest: 
+  No manifest
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
