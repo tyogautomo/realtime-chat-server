@@ -10,8 +10,19 @@ const io = socketIo(server);
 const routes = require('./routes');
 
 app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 let chats = [];
+
+mongoose.connect('mongodb://localhost/chat-db', {
+    useNewUrlParser: true,
+    useFindAndModify: false,
+    useUnifiedTopology: true,
+    useCreateIndex: true
+})
+    .then(() => console.log('Connected to MongoDB Ngobrol Film Database!'))
+    .catch(err => console.log(err, 'failed to connecting mongoDB server database.'));
 
 io.on("connection", socket => {
     console.log("a user connected :D");
@@ -30,7 +41,7 @@ io.on("connection", socket => {
 });
 
 app.get('/', (_, res) => {
-    res.json({ text: 'welcome to socket chat service!!' });
+    res.json({ text: 'welcome to real time chat service!!' });
 });
 
 app.use('/', routes);

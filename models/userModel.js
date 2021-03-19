@@ -3,7 +3,8 @@ const { model, Schema, Types: { ObjectId } } = require('mongoose');
 const userSchema = new Schema({
     username: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     password: {
         type: String,
@@ -13,6 +14,8 @@ const userSchema = new Schema({
         type: [ObjectId],
         ref: 'User'
     }
+}, {
+    timestamps: true
 });
 
 const User = model('User', userSchema);
