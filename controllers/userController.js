@@ -15,16 +15,15 @@ class UserController {
     static async signIn(req, res, next) {
         try {
             const { username, password } = req.body;
-            const user = await User.findOne({ username });
+            const user = await User
+                .findOne({ username })
+                .populate('activeChats')
+                .select('-__v');
             if ((password === user.password) && user) {
-                const payload = {
-                    userId: user._id,
-                    username
-                };
-                console.log('berhasil')
+                const payload = user._doc;
+                delete payload.password;
                 res.status(200).json(payload);
             } else {
-                console.log('gagal')
                 res.status(401).json({
                     code: 401,
                     message: 'Wrong username/password'

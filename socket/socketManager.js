@@ -1,8 +1,8 @@
 const { MessageController } = require('../controllers/messageController');
 let chats = [];
 
-const connectingSocket = (io) => {
-    io.on("connection", socket => {
+class SocketManager {
+    static connection(socket) {
         console.log("a user connected :D");
         socket.on("send message", msg => {
             chats = [...chats, msg];
@@ -16,7 +16,7 @@ const connectingSocket = (io) => {
         socket.on('disconnect', reason => {
             console.log('user DISCONNECTED...');
         });
-    });
+    }
 }
 
-module.exports = { connectingSocket };
+module.exports = { SocketManager };

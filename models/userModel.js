@@ -13,6 +13,10 @@ const userSchema = new Schema({
     friends: {
         type: [ObjectId],
         ref: 'User'
+    },
+    activeChats: {
+        type: [ObjectId],
+        ref: 'Room'
     }
 }, {
     timestamps: true

@@ -3,11 +3,12 @@ const { Message } = require('../models/messageModel');
 class MessageController {
     static async createMessage(req, res, next) {
         try {
-            const { senderId, recipientId, message } = req.body;
+            const { senderId, recipientId, message, roomId } = req.body;
             const payload = {
                 sender: senderId,
                 recipient: recipientId,
-                message
+                message,
+                room: roomId
             };
             const newMessage = await Message.create(payload);
             res.status(201).json(newMessage);
@@ -18,13 +19,9 @@ class MessageController {
 
     static async getRoomMessages(req, res, next) {
         try {
-            const { senderId, recipientId } = req.query;
+            const { roomId } = req.params;
             const messages = await Message
-                .find()
-                .or([
-                    { sender: senderId, recipient: recipientId },
-                    { sender: recipientId, recipient: senderId }
-                ])
+                .find({ room: roomId })
                 .populate({ path: 'sender', select: 'username' })
                 .select('-__v');
             res.status(200).json(messages);

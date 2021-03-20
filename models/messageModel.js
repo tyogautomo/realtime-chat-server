@@ -9,6 +9,10 @@ const messageSchema = new Schema({
         type: ObjectId,
         ref: 'User'
     },
+    room: {
+        type: ObjectId,
+        ref: 'Room',
+    },
     message: {
         type: String,
         required: true
