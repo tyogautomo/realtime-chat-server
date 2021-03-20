@@ -8,7 +8,7 @@ class UserController {
             const user = await User.create(payload);
             res.status(201).json(user);
         } catch (error) {
-            res.json(error);
+            res.status(500).json(error);
         }
     }
 
@@ -21,15 +21,17 @@ class UserController {
                     userId: user._id,
                     username
                 };
+                console.log('berhasil')
                 res.status(200).json(payload);
             } else {
+                console.log('gagal')
                 res.status(401).json({
                     code: 401,
                     message: 'Wrong username/password'
                 })
             }
         } catch (error) {
-            res.json(error);
+            res.status(500).json(error);
         }
     }
 }
