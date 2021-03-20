@@ -3,7 +3,7 @@ const { Room } = require('../models/roomModel');
 class RoomController {
   static async createRoom(req, res, next) {
     try {
-      const { userId, friendId } = req.query;
+      const { userId, friendId } = req.body;
       const room = await Room
         .findOne()
         .or([
@@ -23,6 +23,10 @@ class RoomController {
     } catch (error) {
       res.status(500).json(error);
     }
+  }
+
+  static async getUserRooms(req, res, next) {
+
   }
 }
 

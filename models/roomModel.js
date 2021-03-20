@@ -9,11 +9,11 @@ const roomSchema = new Schema({
   lastMessage: {
     type: ObjectId,
     ref: 'Message',
-    default: ''
+    default: null
   },
   roomType: {
     type: String,
-    default: ''
+    default: 'PRIVATE'
   }
 }, {
   timestamps: true
