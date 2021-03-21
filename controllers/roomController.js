@@ -12,7 +12,7 @@ class RoomController {
           participants: [userId, friendId]
         };
         const newRoom = await Room.create(payload);
-        return newRoom
+        return newRoom;
       } else {
         return room;
       }

@@ -2,7 +2,7 @@ const cors = require('cors');
 const express = require('express');
 const mongoose = require('mongoose');
 const socketIo = require('socket.io');
-const { createServer } = require('http')
+const { createServer } = require('http');
 
 const app = express();
 const server = createServer(app);
@@ -23,7 +23,7 @@ mongoose.connect('mongodb://localhost/chat-db', {
     .catch(err => console.log(err, 'failed to connecting mongoDB server database.'));
 
 io.on('connection', (socket) => SocketManager.connection(socket, io));
-app.get('/', (_, res) => { res.json({ text: 'welcome to real time chat service!!' }) });
+app.get('/', (_, res) => { res.json({ text: 'welcome to real time chat service!!' }); });
 app.use('/', routes);
 
 server.listen(3000, () => console.log('app listening to port 3000'));

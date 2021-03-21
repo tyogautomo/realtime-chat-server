@@ -17,7 +17,7 @@ const roomSchema = new Schema({
   }
 }, {
   timestamps: true
-})
+});
 
 const Room = model('Room', roomSchema);
 

@@ -30,7 +30,7 @@ class SocketManager {
 
         socket.on('get active chats', async (username) => {
             const user = await UserController.getLoggedUser(username);
-            console.log('get user on backend.....')
+            console.log('get user on backend.....');
             socket.emit('get active chats', user.activeChats);
         });
 
