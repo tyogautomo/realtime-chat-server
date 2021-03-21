@@ -22,7 +22,7 @@ class RoomController {
     }
   }
 
-  static async updateLastMessage(message, roomId, senderId) {
+  static async updateLastMessage(message, roomId) {
     try {
       const payload = { lastMessage: message };
       const room = await Room
@@ -38,12 +38,7 @@ class RoomController {
           select: 'message'
         })
         .select('-__v');
-      const formattedRoom = { ...room._doc };
-      const recipient = formattedRoom.participants.filter(userInfo => userInfo._id.toString() != senderId.toString())[0];
-      formattedRoom.recipient = recipient;
-      delete formattedRoom.participants;
-
-      return formattedRoom;
+      return room;
     } catch (error) {
       console.log(error, 'error when updateLastMessage');
       return error;

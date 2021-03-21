@@ -17,9 +17,9 @@ class SocketManager {
         });
 
         socket.on('send message', async (payload) => {
-            const { roomId, senderId } = payload;
+            const { roomId } = payload;
             const message = await MessageController.createMessage(payload);
-            const updatedRoom = await RoomController.updateLastMessage(message, roomId, senderId);
+            const updatedRoom = await RoomController.updateLastMessage(message, roomId);
             io.to(roomId).emit('send message', { message, updatedRoom });
         });
 

@@ -31,14 +31,6 @@ class UserController {
             if (user && (password === user.password)) {
                 const payload = { ...user._doc };
                 delete payload.password;
-                const newActiveChats = payload.activeChats.map(room => {
-                    const newPayload = { ...room._doc };
-                    const recipient = newPayload.participants.filter(userInfo => userInfo._id.toString() != user._id.toString())[0];
-                    newPayload.recipient = recipient;
-                    delete newPayload.participants;
-                    return newPayload;
-                });
-                payload.activeChats = newActiveChats;
                 res.status(200).json(payload);
             } else {
                 res.status(401).json({
@@ -74,15 +66,7 @@ class UserController {
                 })
                 .select('-__v');
             if (user) {
-                const payload = { ...user._doc };
-                const activeChats = payload.activeChats.map(room => {
-                    const formattedRoom = { ...room._doc };
-                    const recipient = formattedRoom.participants.filter(userInfo => userInfo._id.toString() != user._id.toString())[0];
-                    formattedRoom.recipient = recipient;
-                    delete formattedRoom.participants;
-                    return formattedRoom;
-                });
-                return activeChats;
+                return user.activeChats;
             } else {
                 console.log({
                     code: 404,
