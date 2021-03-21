@@ -1,7 +1,6 @@
 const { MessageController } = require('../controllers/messageController');
-// const { RoomController } = require('../controllers/roomController');
+const { RoomController } = require('../controllers/roomController');
 const { UserController } = require('../controllers/userController');
-let chats = [];
 
 class SocketManager {
     static connection(socket, io) {
@@ -18,28 +17,25 @@ class SocketManager {
         });
 
         socket.on('send message', async (payload) => {
-            const { roomId } = payload;
+            const { roomId, senderId } = payload;
             const message = await MessageController.createMessage(payload);
-            console.log(message, 'new message on backend <<<<<<<<<<');
-            io.to(roomId).emit('send message', message);
+            const updatedRoom = await RoomController.updateLastMessage(message, roomId, senderId);
+            io.to(roomId).emit('send message', { message, updatedRoom });
         });
 
-        socket.on('fetch message', () => {
-            socket.emit('fetch message', chats);
+        socket.on('fetch messages', async (roomId) => {
+            const messages = await MessageController.getRoomMessages(roomId);
+            socket.emit('fetch messages', messages);
         });
 
-        socket.on('get active chats', async (username) => {
-            const user = await UserController.getLoggedUser(username);
-            console.log('get user on backend.....');
-            socket.emit('get active chats', user.activeChats);
+        socket.on('get active chats', async (userId) => {
+            const activeChats = await UserController.getActiveChats(userId);
+            console.log('get active chats on backend.....');
+            socket.emit('get active chats', activeChats);
         });
 
         socket.on('disconnect', reason => {
             console.log('DISCONNECTED...| reason: ' + reason);
-        });
-
-        socket.on('connect', () => {
-            console.log('user reconnected...');
         });
     }
 }

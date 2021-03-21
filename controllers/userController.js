@@ -51,33 +51,38 @@ class UserController {
         }
     }
 
-    static async getLoggedUser(username) {
+    static async getActiveChats(userId) {
         try {
             const user = await User
-                .findOne({ username })
+                .findOne({ _id: userId })
                 .populate({
                     path: 'activeChats',
                     model: 'Room',
                     select: '-__v -createdAt',
-                    populate: {
-                        path: 'participants',
-                        model: 'User',
-                        select: 'username'
-                    }
+                    populate: [
+                        {
+                            path: 'participants',
+                            model: 'User',
+                            select: 'username'
+                        },
+                        {
+                            path: 'lastMessage',
+                            model: 'Message',
+                            select: 'message'
+                        }
+                    ]
                 })
                 .select('-__v');
             if (user) {
                 const payload = { ...user._doc };
-                delete payload.password;
-                const newActiveChats = payload.activeChats.map(room => {
-                    const newPayload = { ...room._doc };
-                    const recipient = newPayload.participants.filter(userInfo => userInfo._id.toString() != user._id.toString())[0];
-                    newPayload.recipient = recipient;
-                    delete newPayload.participants;
-                    return newPayload;
+                const activeChats = payload.activeChats.map(room => {
+                    const formattedRoom = { ...room._doc };
+                    const recipient = formattedRoom.participants.filter(userInfo => userInfo._id.toString() != user._id.toString())[0];
+                    formattedRoom.recipient = recipient;
+                    delete formattedRoom.participants;
+                    return formattedRoom;
                 });
-                payload.activeChats = newActiveChats;
-                return payload;
+                return activeChats;
             } else {
                 console.log({
                     code: 404,

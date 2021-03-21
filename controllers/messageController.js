@@ -11,23 +11,27 @@ class MessageController {
                 room: roomId
             };
             const newMessage = await Message.create(payload);
-            return newMessage;
+            const populatedMessage = Message
+                .findById(newMessage._id)
+                .populate({ path: 'sender', select: 'username' })
+                .select('-__v');
+            return populatedMessage;
         } catch (error) {
             console.log(error.message, 'error on createMessage <<<');
             return error;
         }
     }
 
-    static async getRoomMessages(req, res) {
+    static async getRoomMessages(roomId) {
         try {
-            const { roomId } = req.params;
             const messages = await Message
                 .find({ room: roomId })
                 .populate({ path: 'sender', select: 'username' })
                 .select('-__v');
-            res.status(200).json(messages);
+            return messages;
         } catch (error) {
-            res.json(error);
+            console.log(error.messages, 'error when getRoomMessages <<<');
+            return error;
         }
     }
 }

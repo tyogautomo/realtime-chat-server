@@ -22,9 +22,38 @@ class RoomController {
     }
   }
 
+  static async updateLastMessage(message, roomId, senderId) {
+    try {
+      const payload = { lastMessage: message };
+      const room = await Room
+        .findOneAndUpdate({ _id: roomId }, payload, { new: true })
+        .populate({
+          path: 'participants',
+          model: 'User',
+          select: 'username'
+        })
+        .populate({
+          path: 'lastMessage',
+          model: 'Message',
+          select: 'message'
+        })
+        .select('-__v');
+      const formattedRoom = { ...room._doc };
+      const recipient = formattedRoom.participants.filter(userInfo => userInfo._id.toString() != senderId.toString())[0];
+      formattedRoom.recipient = recipient;
+      delete formattedRoom.participants;
+
+      return formattedRoom;
+    } catch (error) {
+      console.log(error, 'error when updateLastMessage');
+      return error;
+    }
+  }
+
   static async getUserRooms() {
 
   }
+
 }
 
 module.exports = { RoomController };
