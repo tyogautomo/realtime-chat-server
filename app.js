@@ -22,7 +22,7 @@ mongoose.connect('mongodb://localhost/chat-db', {
     .then(() => console.log('Connected to Real Time CHAT DB!'))
     .catch(err => console.log(err, 'failed to connecting mongoDB server database.'));
 
-io.on('connection', SocketManager.connection);
+io.on('connection', (socket) => SocketManager.connection(socket, io));
 app.get('/', (_, res) => { res.json({ text: 'welcome to real time chat service!!' }) });
 app.use('/', routes);
 

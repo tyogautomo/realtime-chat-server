@@ -1,7 +1,7 @@
 const { User } = require('../models/userModel');
 
 class UserController {
-    static async createUser(req, res, next) {
+    static async createUser(req, res) {
         try {
             const { username, password } = req.body;
             const payload = { username, password };
@@ -12,7 +12,7 @@ class UserController {
         }
     }
 
-    static async signIn(req, res, next) {
+    static async signIn(req, res) {
         try {
             const { username, password } = req.body;
             const user = await User
@@ -44,7 +44,7 @@ class UserController {
                 res.status(401).json({
                     code: 401,
                     message: 'Wrong username/password'
-                })
+                });
             }
         } catch (error) {
             res.status(500).json(error);
@@ -82,7 +82,7 @@ class UserController {
                 console.log({
                     code: 404,
                     message: 'user not found.'
-                })
+                });
             }
         } catch (error) {
             console.log(error.message);

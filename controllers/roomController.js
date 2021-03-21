@@ -1,31 +1,28 @@
 const { Room } = require('../models/roomModel');
 
 class RoomController {
-  static async createRoom(req, res, next) {
+  static async createRoom(userId, friendId) {
     try {
-      const { userId, friendId } = req.body;
       const room = await Room
         .findOne()
-        .or([
-          { participants: userId },
-          { participants: friendId }
-        ])
+        .all('participants', [userId, friendId])
         .select('-__v');
       if (!room) {
         const payload = {
           participants: [userId, friendId]
         };
         const newRoom = await Room.create(payload);
-        res.status(201).json(newRoom);
+        return newRoom
       } else {
-        res.status(200).json(room);
+        return room;
       }
     } catch (error) {
-      res.status(500).json(error);
+      console.log(error.message, 'error creating room <<<<<<');
+      return error;
     }
   }
 
-  static async getUserRooms(req, res, next) {
+  static async getUserRooms() {
 
   }
 }

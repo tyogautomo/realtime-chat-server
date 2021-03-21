@@ -1,9 +1,9 @@
 const { Message } = require('../models/messageModel');
 
 class MessageController {
-    static async createMessage(req, res, next) {
+    static async createMessage(data) {
         try {
-            const { senderId, recipientId, message, roomId } = req.body;
+            const { senderId, recipientId, message, roomId } = data;
             const payload = {
                 sender: senderId,
                 recipient: recipientId,
@@ -11,13 +11,14 @@ class MessageController {
                 room: roomId
             };
             const newMessage = await Message.create(payload);
-            res.status(201).json(newMessage);
+            return newMessage;
         } catch (error) {
-            res.json(error);
+            console.log(error.message, 'error on createMessage <<<');
+            return error;
         }
     }
 
-    static async getRoomMessages(req, res, next) {
+    static async getRoomMessages(req, res) {
         try {
             const { roomId } = req.params;
             const messages = await Message
