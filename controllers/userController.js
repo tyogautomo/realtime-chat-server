@@ -27,6 +27,7 @@ class UserController {
                         select: 'username'
                     }
                 })
+                .populate({ path: 'friends', select: 'username' })
                 .select('-__v');
             if (user && (password === user.password)) {
                 const payload = { ...user._doc };
@@ -41,6 +42,10 @@ class UserController {
         } catch (error) {
             res.status(500).json(error);
         }
+    }
+
+    static async addActiveChat(userId, roomId) {
+
     }
 
     static async getActiveChats(userId) {

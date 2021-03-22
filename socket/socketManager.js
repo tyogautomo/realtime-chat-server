@@ -6,6 +6,11 @@ class SocketManager {
     static connection(socket, io) {
         console.log('a user connected :D with ID =>' + socket.id);
 
+        socket.on('init chat', ({userId, friendId}) => {
+            console.log(userId, '<<<<<< userId');
+            console.log(friendId, '<<<<<< friendId');
+        });
+
         socket.on('join room', async (roomId) => {
             console.log(`user ${socket.id} join room: ${roomId}`);
             socket.join(roomId);
