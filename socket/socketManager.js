@@ -3,12 +3,17 @@ const { RoomController } = require('../controllers/roomController');
 const { UserController } = require('../controllers/userController');
 
 class SocketManager {
+    constructor() {
+        this.onlineUsers = [];
+    }
+
     static connection(socket, io) {
         console.log('a user connected :D with ID =>' + socket.id);
 
-        socket.on('init chat', ({userId, friendId}) => {
-            console.log(userId, '<<<<<< userId');
-            console.log(friendId, '<<<<<< friendId');
+        socket.on('init chat', async ({ userId, friendId }) => {
+            const room = await RoomController.createRoom(userId, friendId);
+            const { isNewActive } = await UserController.addActiveChat(userId, room._id);
+            socket.emit('init chat', { room, isNewActive, friendId });
         });
 
         socket.on('join room', async (roomId) => {

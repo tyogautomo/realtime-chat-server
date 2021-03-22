@@ -4,15 +4,23 @@ class RoomController {
   static async createRoom(userId, friendId) {
     try {
       const room = await Room
-        .findOne()
-        .all('participants', [userId, friendId])
+        .findOne({
+          participants: {
+            $all: [userId, friendId]
+          }
+        })
+        .populate({ path: 'participants', model: 'User', select: 'username' })
         .select('-__v');
       if (!room) {
         const payload = {
           participants: [userId, friendId]
         };
         const newRoom = await Room.create(payload);
-        return newRoom;
+        const populatedRoom = await Room
+          .findById(newRoom._id)
+          .populate({ path: 'participants', select: 'username' })
+          .select('-__v');
+        return populatedRoom;
       } else {
         return room;
       }

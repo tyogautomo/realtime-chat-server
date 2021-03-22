@@ -45,7 +45,26 @@ class UserController {
     }
 
     static async addActiveChat(userId, roomId) {
-
+        try {
+            const user = await User.findById(userId);
+            if (user) {
+                console.log(user.activeChats.includes(roomId), 'active chats <<<<<<<<<<');
+                if (!user.activeChats.includes(roomId)) {
+                    console.log('masukin ke active chat');
+                    user.activeChats.push(roomId);
+                    user.save();
+                    return { isNewActive: true };
+                } else {
+                    console.log('gaperlu masukin ke active chat');
+                    return { isNewActive: false };
+                }
+            } else {
+                console.log('user not found');
+            }
+        } catch (error) {
+            console.log('error on addActiveChat');
+            return error;
+        }
     }
 
     static async getActiveChats(userId) {
