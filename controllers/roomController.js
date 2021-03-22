@@ -18,7 +18,7 @@ class RoomController {
         const newRoom = await Room.create(payload);
         const populatedRoom = await Room
           .findById(newRoom._id)
-          .populate({ path: 'participants', select: 'username' })
+          .populate({ path: 'participants', model: 'User', select: 'username' })
           .select('-__v');
         return populatedRoom;
       } else {
@@ -53,8 +53,8 @@ class RoomController {
     }
   }
 
-  static async getUserRooms() {
-
+  static async getAvailableRooms(userId, friends) {
+   
   }
 
 }

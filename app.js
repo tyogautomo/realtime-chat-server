@@ -9,6 +9,7 @@ const server = createServer(app);
 const io = socketIo(server);
 const routes = require('./routes');
 const { SocketManager } = require('./socket/socketManager');
+const socketServer = new SocketManager();
 
 app.use(cors());
 app.use(express.json());
@@ -22,7 +23,7 @@ mongoose.connect('mongodb://localhost/chat-db', {
     .then(() => console.log('Connected to Real Time CHAT DB!'))
     .catch(err => console.log(err, 'failed to connecting mongoDB server database.'));
 
-io.on('connection', (socket) => SocketManager.connection(socket, io));
+io.on('connection', (socket) => socketServer.connection(socket, io));
 app.get('/', (_, res) => { res.json({ text: 'welcome to real time chat service!!' }); });
 app.use('/', routes);
 

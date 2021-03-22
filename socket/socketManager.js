@@ -5,10 +5,11 @@ const { UserController } = require('../controllers/userController');
 class SocketManager {
     constructor() {
         this.onlineUsers = [];
+        this.onAppUsers = [];
     }
 
-    static connection(socket, io) {
-        console.log('a user connected :D with ID =>' + socket.id);
+    connection(socket, io) {
+        console.log('a user connected with ID =>' + socket.id);
 
         socket.on('init chat', async ({ userId, friendId }) => {
             const room = await RoomController.createRoom(userId, friendId);
@@ -44,7 +45,32 @@ class SocketManager {
             socket.emit('get active chats', activeChats);
         });
 
+        socket.on('identity', (userId) => {
+            const payload = {
+                userId,
+                socketId: socket.id
+            }
+            this.onlineUsers.push(payload);
+            this.onAppUsers.push(payload);
+        });
+
+        socket.on('active app', (userId) => {
+            console.log(`${userId} is active`);
+            this.onAppUsers.push({
+                userId,
+                socketId: socket.id
+            });
+        });
+
+        socket.on('background app', (userId) => {
+            console.log(`${userId} is background`);
+            this.onAppUsers = this.onAppUsers.filter(user => user._id !== userId);
+        });
+
         socket.on('disconnect', reason => {
+            this.onlineUsers = this.onlineUsers.filter(user => user.socketId !== socket.id);
+            this.onAppUsers = this.onAppUsers.filter(user => user.socketId !== socket.id);
+            console.log(this.onlineUsers, 'disconnected...');
             console.log('DISCONNECTED...| reason: ' + reason);
         });
     }
