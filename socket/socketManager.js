@@ -14,6 +14,7 @@ class SocketManager {
         socket.on('init chat', async ({ userId, friendId }) => {
             const room = await RoomController.createRoom(userId, friendId);
             const { isNewActive } = await UserController.addActiveChat(userId, room._id);
+
             socket.emit('init chat', { room, isNewActive, friendId });
         });
 
@@ -34,7 +35,7 @@ class SocketManager {
             const message = await MessageController.createMessage(payload);
             const updatedRoom = await RoomController.updateLastMessage(message, roomId);
             await UserController.addActiveChat(recipientId, roomId);
-            this.subscribeAnotherUser(recipientId, roomId, io);
+            this.subscribeAnotherUser(recipientId, roomId, socket);
 
             io.to(roomId).emit('send message', { message, updatedRoom });
         });
@@ -46,7 +47,6 @@ class SocketManager {
 
         socket.on('get active chats', async (userId) => {
             const activeChats = await UserController.getActiveChats(userId);
-            console.log('get active chats on backend.....');
             socket.emit('get active chats', activeChats);
         });
 
@@ -75,13 +75,13 @@ class SocketManager {
         socket.on('disconnect', reason => {
             this.onlineUsers = this.onlineUsers.filter(user => user.socket.id !== socket.id);
             this.onAppUsers = this.onAppUsers.filter(user => user.socket.id !== socket.id);
-            console.log(this.onlineUsers, 'disconnected...');
             console.log('DISCONNECTED...| reason: ' + reason);
         });
     }
 
-    subscribeAnotherUser(recipientId, roomId) {
+    subscribeAnotherUser(recipientId, roomId, socket) {
         const friends = this.onlineUsers.filter(user => user.userId === recipientId);
+        socket.join(roomId);
         friends.forEach(user => {
             user.socket.join(roomId);
         });

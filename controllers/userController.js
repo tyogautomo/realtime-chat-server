@@ -44,6 +44,35 @@ class UserController {
         }
     }
 
+    static async getUserData(req, res) {
+        try {
+            const { userId } = req.params;
+            const user = await User
+                .findById(userId)
+                .populate({
+                    path: 'activeChats',
+                    model: 'Room',
+                    select: '-__v -createdAt',
+                    populate: {
+                        path: 'participants',
+                        model: 'User',
+                        select: 'username'
+                    }
+                })
+                .populate({ path: 'friends', select: 'username' })
+                .select('-__v');
+            if (user) {
+                const payload = { ...user._doc };
+                delete payload.password;
+                res.status(200).json(payload);
+            } else {
+                res.status(404).json({ message: 'user not found' });
+            }
+        } catch (error) {
+            res.status(500).json(error);
+        }
+    }
+
     static async addActiveChat(userId, roomId) {
         try {
             const user = await User.findById(userId);
