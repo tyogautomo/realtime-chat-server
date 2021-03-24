@@ -17,9 +17,11 @@ class SocketManager {
             socket.emit('init chat', { room, isNewActive, friendId });
         });
 
-        socket.on('join room', async (roomId) => {
-            console.log(`user ${socket.id} join room: ${roomId}`);
-            socket.join(roomId);
+        socket.on('join room', async (roomIds) => {
+            if (roomIds.length !== 0) {
+                console.log(`user ${socket.id} join room: ${roomIds}`);
+                socket.join(roomIds);
+            }
         });
 
         socket.on('leave room', roomId => {
@@ -28,9 +30,12 @@ class SocketManager {
         });
 
         socket.on('send message', async (payload) => {
-            const { roomId } = payload;
+            const { roomId, recipientId } = payload;
             const message = await MessageController.createMessage(payload);
             const updatedRoom = await RoomController.updateLastMessage(message, roomId);
+            await UserController.addActiveChat(recipientId, roomId);
+            this.subscribeAnotherUser(recipientId, roomId, io);
+
             io.to(roomId).emit('send message', { message, updatedRoom });
         });
 
@@ -48,8 +53,8 @@ class SocketManager {
         socket.on('identity', (userId) => {
             const payload = {
                 userId,
-                socketId: socket.id
-            }
+                socket
+            };
             this.onlineUsers.push(payload);
             this.onAppUsers.push(payload);
         });
@@ -58,7 +63,7 @@ class SocketManager {
             console.log(`${userId} is active`);
             this.onAppUsers.push({
                 userId,
-                socketId: socket.id
+                socket
             });
         });
 
@@ -68,10 +73,17 @@ class SocketManager {
         });
 
         socket.on('disconnect', reason => {
-            this.onlineUsers = this.onlineUsers.filter(user => user.socketId !== socket.id);
-            this.onAppUsers = this.onAppUsers.filter(user => user.socketId !== socket.id);
+            this.onlineUsers = this.onlineUsers.filter(user => user.socket.id !== socket.id);
+            this.onAppUsers = this.onAppUsers.filter(user => user.socket.id !== socket.id);
             console.log(this.onlineUsers, 'disconnected...');
             console.log('DISCONNECTED...| reason: ' + reason);
+        });
+    }
+
+    subscribeAnotherUser(recipientId, roomId) {
+        const friends = this.onlineUsers.filter(user => user.userId === recipientId);
+        friends.forEach(user => {
+            user.socket.join(roomId);
         });
     }
 }
