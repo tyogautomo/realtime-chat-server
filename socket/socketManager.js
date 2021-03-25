@@ -11,6 +11,15 @@ class SocketManager {
     connection(socket, io) {
         console.log('a user connected with ID =>' + socket.id);
 
+        socket.on('add friend', async (friendId, userId) => {
+            const { currentData, friendData } = await UserController.addFriend(friendId, userId);
+            const friendConn = this.onlineUsers.filter(user => user.userId === friendId);
+            friendConn.forEach(user => {
+                user.socket.emit('add friend', currentData);
+            });
+            socket.emit('add friend', friendData);
+        });
+
         socket.on('init chat', async ({ userId, friendId }) => {
             const room = await RoomController.createRoom(userId, friendId);
             const { isNewActive } = await UserController.addActiveChat(userId, room._id);
@@ -25,7 +34,7 @@ class SocketManager {
             }
         });
 
-        socket.on('leave room', roomId => {
+        socket.on('leave room', (roomId) => {
             console.log(`user ${socket.id} leave room: ${roomId}`);
             socket.leave(roomId);
         });
@@ -72,7 +81,7 @@ class SocketManager {
             this.onAppUsers = this.onAppUsers.filter(user => user._id !== userId);
         });
 
-        socket.on('disconnect', reason => {
+        socket.on('disconnect', (reason) => {
             this.onlineUsers = this.onlineUsers.filter(user => user.socket.id !== socket.id);
             this.onAppUsers = this.onAppUsers.filter(user => user.socket.id !== socket.id);
             console.log('DISCONNECTED...| reason: ' + reason);

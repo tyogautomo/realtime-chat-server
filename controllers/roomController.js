@@ -53,10 +53,6 @@ class RoomController {
     }
   }
 
-  static async getAvailableRooms(userId, friends) {
-   
-  }
-
 }
 
 module.exports = { RoomController };

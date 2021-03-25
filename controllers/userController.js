@@ -155,6 +155,23 @@ class UserController {
             res.status(200).json(error);
         }
     }
+
+    static async addFriend(friendId, userId) {
+        try {
+            const current = await User.findById(userId);
+            const friend = await User.findById(friendId);
+            current.friends.push(friendId);
+            friend.friends.push(userId);
+            current.save();
+            friend.save();
+
+            const friendData = { _id: friend._id, username: friend.username };
+            const currentData = { _id: current.id, username: current.username };
+            return { friendData, currentData };
+        } catch (error) {
+            console.log(error);
+        }
+    }
 }
 
 module.exports = { UserController };
