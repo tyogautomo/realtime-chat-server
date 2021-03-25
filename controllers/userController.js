@@ -127,6 +127,34 @@ class UserController {
             console.log(error.message);
         }
     }
+
+    static async searchFriends(req, res) {
+        try {
+            const { q, userId } = req.query;
+            const users = await User
+                .find({
+                    _id: {
+                        $ne: userId
+                    },
+                    username: {
+                        $regex: q,
+                        $options: 'i'
+                    }
+                })
+                .select('username friends');
+            const friends = users
+                .filter(user => !user.friends.includes(userId))
+                .map(user => {
+                    const newUser = { ...user._doc };
+                    delete newUser.friends;
+                    return newUser;
+                });
+            res.status(200).json(friends);
+        } catch (error) {
+            console.log(error);
+            res.status(200).json(error);
+        }
+    }
 }
 
 module.exports = { UserController };
