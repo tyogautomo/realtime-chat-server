@@ -7,5 +7,6 @@ const { MessageController } = require('../controllers/messageController');
 
 router.post('/', MessageController.createMessage);
 router.get('/room-messages', MessageController.getRoomMessages);
+router.delete('/', MessageController.deleteAll);
 
 module.exports = router;

@@ -17,6 +17,10 @@ const userSchema = new Schema({
     activeChats: {
         type: [ObjectId],
         ref: 'Room'
+    },
+    backgroundColor: {
+        type: 'String',
+        default: 'black'
     }
 }, {
     timestamps: true

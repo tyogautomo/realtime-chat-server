@@ -13,7 +13,7 @@ class MessageController {
             const newMessage = await Message.create(payload);
             const populatedMessage = Message
                 .findById(newMessage._id)
-                .populate({ path: 'sender', select: 'username' })
+                .populate({ path: 'sender', select: 'username backgroundColor' })
                 .select('-__v');
             return populatedMessage;
         } catch (error) {
@@ -26,12 +26,21 @@ class MessageController {
         try {
             const messages = await Message
                 .find({ room: roomId })
-                .populate({ path: 'sender', select: 'username' })
+                .populate({ path: 'sender', select: 'username backgroundColor' })
                 .select('-__v');
             return messages;
         } catch (error) {
             console.log(error.messages, 'error when getRoomMessages <<<');
             return error;
+        }
+    }
+
+    static async deleteAll(req, res) {
+        try {
+            await Message.deleteMany();
+            res.status(200).json({ message: 'successfuly deleted all messages' });
+        } catch (error) {
+            console.log(error);
         }
     }
 }

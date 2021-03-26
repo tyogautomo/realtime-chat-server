@@ -1,10 +1,13 @@
 const { User } = require('../models/userModel');
 
+const { getRandomColor } = require('../utils/helpers');
+
 class UserController {
     static async createUser(req, res) {
         try {
             const { username, password } = req.body;
-            const payload = { username, password };
+            const backgroundColor = getRandomColor();
+            const payload = { username, password, backgroundColor };
             const user = await User.create(payload);
             res.status(201).json(user);
         } catch (error) {
@@ -27,7 +30,7 @@ class UserController {
                         select: 'username'
                     }
                 })
-                .populate({ path: 'friends', select: 'username' })
+                .populate({ path: 'friends', select: 'username backgroundColor' })
                 .select('-__v');
             if (user && (password === user.password)) {
                 const payload = { ...user._doc };
@@ -56,10 +59,10 @@ class UserController {
                     populate: {
                         path: 'participants',
                         model: 'User',
-                        select: 'username'
+                        select: 'username backgroundColor'
                     }
                 })
-                .populate({ path: 'friends', select: 'username' })
+                .populate({ path: 'friends', select: 'username backgroundColor' })
                 .select('-__v');
             if (user) {
                 const payload = { ...user._doc };
@@ -105,7 +108,7 @@ class UserController {
                         {
                             path: 'participants',
                             model: 'User',
-                            select: 'username'
+                            select: 'username backgroundColor'
                         },
                         {
                             path: 'lastMessage',
@@ -168,6 +171,15 @@ class UserController {
             const friendData = { _id: friend._id, username: friend.username };
             const currentData = { _id: current.id, username: current.username };
             return { friendData, currentData };
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    static async deleteAll(req, res) {
+        try {
+            await User.deleteMany();
+            res.status(200).json({ message: 'successfuly deleted all users' });
         } catch (error) {
             console.log(error);
         }

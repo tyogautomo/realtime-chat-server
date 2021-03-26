@@ -9,7 +9,7 @@ class RoomController {
             $all: [userId, friendId]
           }
         })
-        .populate({ path: 'participants', model: 'User', select: 'username' })
+        .populate({ path: 'participants', model: 'User', select: 'username backgroundColor' })
         .select('-__v');
       if (!room) {
         const payload = {
@@ -18,7 +18,7 @@ class RoomController {
         const newRoom = await Room.create(payload);
         const populatedRoom = await Room
           .findById(newRoom._id)
-          .populate({ path: 'participants', model: 'User', select: 'username' })
+          .populate({ path: 'participants', model: 'User', select: 'username backgroundColor' })
           .select('-__v');
         return populatedRoom;
       } else {
@@ -38,7 +38,7 @@ class RoomController {
         .populate({
           path: 'participants',
           model: 'User',
-          select: 'username'
+          select: 'username backgroundColor'
         })
         .populate({
           path: 'lastMessage',
@@ -50,6 +50,15 @@ class RoomController {
     } catch (error) {
       console.log(error, 'error when updateLastMessage');
       return error;
+    }
+  }
+
+  static async deleteAll(req, res) {
+    try {
+      await Room.deleteMany();
+      res.status(200).json({ message: 'successfuly deleted all room' });
+    } catch (error) {
+      console.log(error);
     }
   }
 
