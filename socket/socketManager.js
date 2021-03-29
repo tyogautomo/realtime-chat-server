@@ -54,6 +54,13 @@ class SocketManager {
             socket.emit('fetch messages', messages);
         });
 
+        socket.on('read messages', async (roomId, userId) => {
+            const updatedMessages = await MessageController.readAllMessages(roomId, userId);
+            const updatedRoom = await RoomController.removeUnreadMessages(roomId, userId);
+            // console.log(JSON.stringify(updatedMessages, null, 2), 'updated messages <<<<<<<<<<<<<<<<<<<<');
+            io.to(roomId).emit('read messages', { updatedMessages, updatedRoom });
+        });
+
         socket.on('get active chats', async (userId) => {
             const activeChats = await UserController.getActiveChats(userId);
             socket.emit('get active chats', activeChats);

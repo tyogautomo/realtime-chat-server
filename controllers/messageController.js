@@ -1,4 +1,5 @@
 const { Message } = require('../models/messageModel');
+const { Room } = require('../models/roomModel');
 
 class MessageController {
     static async createMessage(data) {
@@ -31,6 +32,27 @@ class MessageController {
             return messages;
         } catch (error) {
             console.log(error.messages, 'error when getRoomMessages <<<');
+            return error;
+        }
+    }
+
+    static async readAllMessages(roomId, userId) {
+        try {
+            const room = await Room
+                .findById(roomId)
+                .populate({ path: 'unreadMessages', model: 'Message' });
+            if (room) {
+                const messages = room.unreadMessages.filter(msg => msg.recipient.toString() === userId.toString());
+                messages.forEach(async msg => {
+                    await Message.updateOne({ _id: msg._id }, { read: true });
+                });
+                const updatedMessages = await this.getRoomMessages(roomId);
+                return updatedMessages;
+            } else {
+                console.log('error when readAllMessages <<<');
+            }
+        } catch (error) {
+            console.log(error.messages, 'error when readAllMessages <<<');
             return error;
         }
     }

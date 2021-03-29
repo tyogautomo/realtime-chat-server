@@ -33,7 +33,7 @@ class UserController {
                         {
                             path: 'lastMessage',
                             model: 'Message',
-                            select: 'message sender',
+                            select: 'message sender read',
                             populate: {
                                 path: 'sender',
                                 model: 'User',
@@ -87,7 +87,7 @@ class UserController {
                         {
                             path: 'lastMessage',
                             model: 'Message',
-                            select: 'message sender',
+                            select: 'message sender read',
                             populate: {
                                 path: 'sender',
                                 model: 'User',
@@ -157,7 +157,7 @@ class UserController {
                         {
                             path: 'lastMessage',
                             model: 'Message',
-                            select: 'message sender',
+                            select: 'message sender read',
                             populate: {
                                 path: 'sender',
                                 model: 'User',

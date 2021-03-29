@@ -68,7 +68,7 @@ class RoomController {
         .populate({
           path: 'lastMessage',
           model: 'Message',
-          select: 'message',
+          select: 'message read sender',
           populate: {
             path: 'sender',
             model: 'User',
@@ -89,6 +89,53 @@ class RoomController {
       return room;
     } catch (error) {
       console.log(error, 'error when addLastAndUnreadMessage');
+      return error;
+    }
+  }
+
+  static async removeUnreadMessages(roomId, userId) {
+    try {
+      const room = await Room
+        .findById(roomId)
+        .populate({ path: 'unreadMessages', model: 'Message' });
+      if (room) {
+        const messages = room.unreadMessages.filter(msg => msg.recipient.toString() === userId.toString());
+        const messageIds = messages.map(msg => msg._id);
+        const payload = { $pull: { unreadMessages: { $in: messageIds } } };
+        const updatedRoom = await Room
+          .findByIdAndUpdate(roomId, payload, { new: true })
+          .populate({
+            path: 'participants',
+            model: 'User',
+            select: 'username backgroundColor'
+          })
+          .populate({
+            path: 'lastMessage',
+            model: 'Message',
+            select: 'message read sender',
+            populate: {
+              path: 'sender',
+              model: 'User',
+              select: 'username'
+            }
+          })
+          .populate({
+            path: 'unreadMessages',
+            model: 'Message',
+            select: 'recipient',
+            populate: {
+              path: 'recipient',
+              model: 'User',
+              select: 'username'
+            }
+          })
+          .select('-__v');
+        return updatedRoom;
+      } else {
+        console.log('error when readAllMessages <<<');
+      }
+    } catch (error) {
+      console.log(error, 'error when removeUnreadMessages');
       return error;
     }
   }
