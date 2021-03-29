@@ -13,7 +13,6 @@ const getRandomColor = () => {
   return `${r}, ${g}, ${b}`;
 };
 
-
 module.exports = {
   createToken,
   verifyToken,
