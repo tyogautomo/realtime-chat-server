@@ -42,7 +42,7 @@ class SocketManager {
         socket.on('send message', async (payload) => {
             const { roomId, recipientId } = payload;
             const message = await MessageController.createMessage(payload);
-            const updatedRoom = await RoomController.updateLastMessage(message, roomId);
+            const updatedRoom = await RoomController.addLastAndUnreadMessage(message._id, roomId);
             await UserController.addActiveChat(recipientId, roomId);
             this.subscribeAnotherUser(recipientId, roomId, socket);
 

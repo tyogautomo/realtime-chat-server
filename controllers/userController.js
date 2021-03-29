@@ -24,11 +24,33 @@ class UserController {
                     path: 'activeChats',
                     model: 'Room',
                     select: '-__v -createdAt',
-                    populate: {
-                        path: 'participants',
-                        model: 'User',
-                        select: 'username'
-                    }
+                    populate: [
+                        {
+                            path: 'participants',
+                            model: 'User',
+                            select: 'username backgroundColor'
+                        },
+                        {
+                            path: 'lastMessage',
+                            model: 'Message',
+                            select: 'message sender',
+                            populate: {
+                                path: 'sender',
+                                model: 'User',
+                                select: 'username'
+                            }
+                        },
+                        {
+                            path: 'unreadMessages',
+                            model: 'Message',
+                            select: 'recipient',
+                            populate: {
+                                path: 'recipient',
+                                model: 'User',
+                                select: 'username'
+                            }
+                        }
+                    ]
                 })
                 .populate({ path: 'friends', select: 'username backgroundColor' })
                 .select('-__v');
@@ -56,11 +78,33 @@ class UserController {
                     path: 'activeChats',
                     model: 'Room',
                     select: '-__v -createdAt',
-                    populate: {
-                        path: 'participants',
-                        model: 'User',
-                        select: 'username backgroundColor'
-                    }
+                    populate: [
+                        {
+                            path: 'participants',
+                            model: 'User',
+                            select: 'username backgroundColor'
+                        },
+                        {
+                            path: 'lastMessage',
+                            model: 'Message',
+                            select: 'message sender',
+                            populate: {
+                                path: 'sender',
+                                model: 'User',
+                                select: 'username'
+                            }
+                        },
+                        {
+                            path: 'unreadMessages',
+                            model: 'Message',
+                            select: 'recipient',
+                            populate: {
+                                path: 'recipient',
+                                model: 'User',
+                                select: 'username'
+                            }
+                        }
+                    ]
                 })
                 .populate({ path: 'friends', select: 'username backgroundColor' })
                 .select('-__v');
@@ -113,7 +157,22 @@ class UserController {
                         {
                             path: 'lastMessage',
                             model: 'Message',
-                            select: 'message'
+                            select: 'message sender',
+                            populate: {
+                                path: 'sender',
+                                model: 'User',
+                                select: 'username'
+                            }
+                        },
+                        {
+                            path: 'unreadMessages',
+                            model: 'Message',
+                            select: 'recipient',
+                            populate: {
+                                path: 'recipient',
+                                model: 'User',
+                                select: 'username'
+                            }
                         }
                     ]
                 })

@@ -14,6 +14,10 @@ const roomSchema = new Schema({
   roomType: {
     type: String,
     default: 'PRIVATE'
+  },
+  unreadMessages: {
+    type: [ObjectId],
+    ref: 'Message'
   }
 }, {
   timestamps: true

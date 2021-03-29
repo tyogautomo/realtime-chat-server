@@ -10,6 +10,16 @@ class RoomController {
           }
         })
         .populate({ path: 'participants', model: 'User', select: 'username backgroundColor' })
+        .populate({
+          path: 'unreadMessages',
+          model: 'Message',
+          select: 'recipient',
+          populate: {
+            path: 'recipient',
+            model: 'User',
+            select: 'username'
+          }
+        })
         .select('-__v');
       if (!room) {
         const payload = {
@@ -19,6 +29,16 @@ class RoomController {
         const populatedRoom = await Room
           .findById(newRoom._id)
           .populate({ path: 'participants', model: 'User', select: 'username backgroundColor' })
+          .populate({
+            path: 'unreadMessages',
+            model: 'Message',
+            select: 'recipient',
+            populate: {
+              path: 'recipient',
+              model: 'User',
+              select: 'username'
+            }
+          })
           .select('-__v');
         return populatedRoom;
       } else {
@@ -30,9 +50,14 @@ class RoomController {
     }
   }
 
-  static async updateLastMessage(message, roomId) {
+  static async addLastAndUnreadMessage(messageId, roomId) {
     try {
-      const payload = { lastMessage: message };
+      const payload = {
+        lastMessage: messageId,
+        $push: {
+          unreadMessages: messageId
+        }
+      };
       const room = await Room
         .findOneAndUpdate({ _id: roomId }, payload, { new: true })
         .populate({
@@ -43,12 +68,27 @@ class RoomController {
         .populate({
           path: 'lastMessage',
           model: 'Message',
-          select: 'message'
+          select: 'message',
+          populate: {
+            path: 'sender',
+            model: 'User',
+            select: 'username'
+          }
+        })
+        .populate({
+          path: 'unreadMessages',
+          model: 'Message',
+          select: 'recipient',
+          populate: {
+            path: 'recipient',
+            model: 'User',
+            select: 'username'
+          }
         })
         .select('-__v');
       return room;
     } catch (error) {
-      console.log(error, 'error when updateLastMessage');
+      console.log(error, 'error when addLastAndUnreadMessage');
       return error;
     }
   }
