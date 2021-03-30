@@ -78,7 +78,6 @@ class SocketManager {
         socket.on('read messages', async (roomId, userId) => {
             const updatedMessages = await MessageController.readAllMessages(roomId, userId);
             const updatedRoom = await RoomController.removeUnreadMessages(roomId, userId);
-            // console.log(JSON.stringify(updatedMessages, null, 2), 'updated messages <<<<<<<<<<<<<<<<<<<<');
             io.to(roomId).emit('read messages', { updatedMessages, updatedRoom });
         });
 
@@ -109,7 +108,7 @@ class SocketManager {
         });
 
         socket.on('background app', async (userId) => {
-            this.onAppUsers = this.onAppUsers.filter(user => user._id !== userId);
+            this.onAppUsers = this.onAppUsers.filter(user => user.userId.toString() !== userId.toString());
             const rooms = await UserController.getActiveChats(userId);
             const roomIds = rooms.map(room => room._id);
             roomIds.forEach(roomId => {
