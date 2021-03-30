@@ -11,6 +11,27 @@ class SocketManager {
     connection(socket, io) {
         console.log('a user connected with ID =>' + socket.id);
 
+        socket.on('notify typing', (isTyping, roomId) => {
+            socket.to(roomId.toString()).emit('notify typing', isTyping);
+        });
+
+        socket.on('get online info', (recipientId) => {
+            const userConn = this.onAppUsers.filter(user => user.userId === recipientId);
+            if (userConn.length !== 0) {
+                socket.emit('get online info', { isOnline: true, recipientId });
+            } else {
+                socket.emit('get online info', { isOnline: false, recipientId });
+            }
+        });
+
+        socket.on('notify online', async (userId) => {
+            const rooms = await UserController.getActiveChats(userId);
+            const roomIds = rooms.map(room => room._id);
+            roomIds.forEach(roomId => {
+                socket.to(roomId.toString()).emit('get online info', { isOnline: true, recipientId: userId });
+            });
+        });
+
         socket.on('add friend', async (friendId, userId) => {
             const { currentData, friendData } = await UserController.addFriend(friendId, userId);
             const friendConn = this.onlineUsers.filter(user => user.userId === friendId);
@@ -75,17 +96,25 @@ class SocketManager {
             this.onAppUsers.push(payload);
         });
 
-        socket.on('active app', (userId) => {
-            console.log(`${userId} is active`);
+        socket.on('active app', async (userId) => {
             this.onAppUsers.push({
                 userId,
                 socket
             });
+            const rooms = await UserController.getActiveChats(userId);
+            const roomIds = rooms.map(room => room._id);
+            roomIds.forEach(roomId => {
+                socket.to(roomId.toString()).emit('get online info', { isOnline: true, recipientId: userId });
+            });
         });
 
-        socket.on('background app', (userId) => {
-            console.log(`${userId} is background`);
+        socket.on('background app', async (userId) => {
             this.onAppUsers = this.onAppUsers.filter(user => user._id !== userId);
+            const rooms = await UserController.getActiveChats(userId);
+            const roomIds = rooms.map(room => room._id);
+            roomIds.forEach(roomId => {
+                socket.to(roomId.toString()).emit('get online info', { isOnline: false, recipientId: userId });
+            });
         });
 
         socket.on('disconnect', (reason) => {
