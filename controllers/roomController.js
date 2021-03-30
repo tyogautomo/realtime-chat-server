@@ -68,7 +68,7 @@ class RoomController {
         .populate({
           path: 'lastMessage',
           model: 'Message',
-          select: 'message read sender',
+          select: 'message read sender createdAt',
           populate: {
             path: 'sender',
             model: 'User',
@@ -112,7 +112,7 @@ class RoomController {
           .populate({
             path: 'lastMessage',
             model: 'Message',
-            select: 'message read sender',
+            select: 'message read sender createdAt',
             populate: {
               path: 'sender',
               model: 'User',
