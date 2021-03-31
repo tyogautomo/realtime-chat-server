@@ -203,7 +203,7 @@ class UserController {
                         $options: 'i'
                     }
                 })
-                .select('username friends');
+                .select('username friends backgroundColor');
             const friends = users
                 .filter(user => !user.friends.includes(userId))
                 .map(user => {
@@ -227,8 +227,16 @@ class UserController {
             current.save();
             friend.save();
 
-            const friendData = { _id: friend._id, username: friend.username };
-            const currentData = { _id: current.id, username: current.username };
+            const friendData = {
+                _id: friend._id,
+                username: friend.username,
+                backgroundColor: friend.backgroundColor
+            };
+            const currentData = {
+                _id: current.id,
+                username: current.username,
+                backgroundColor: current.backgroundColor
+            };
             return { friendData, currentData };
         } catch (error) {
             console.log(error);
