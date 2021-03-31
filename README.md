@@ -10,9 +10,24 @@ The client/ frontend repo refer to this link:
 [Frontend Repository](https://github.com/tyogautomo/realtime-chat-client)
 
 This backend service may not looks efficient and has unauthorized flow, but enough to illustrate the real-time private chat concept. <br/>
-This service doesnt use full 100% socket protocol, but also some REST API. Here are some service that use socket and REST:
+This service doesnt use full 100% socket protocol, but also some REST API. <br/>
 
-## Services using Socket
+## Usage
+To run the app simply doing this step
+1. Clone the repo
+2. Install all depedencies using 
+```
+yarn
+```
+3. Run the app using
+```
+yarn start
+```
+
+<br/>
+
+## Services
+### Services using Socket
 | No  | Event  | Description  |
 |---|---|---|
 | 1  |`notify typing`| give an indicator to friend if we are typing a message  |
@@ -30,7 +45,7 @@ This service doesnt use full 100% socket protocol, but also some REST API. Here 
 
 <br/>
 
-## Services using REST API
+### Services using REST API
 | No  | Method | Endpoint  | Description  |
 |---|---|---|---|
 | 1  | POST |`/user/`| sign up a user  |
